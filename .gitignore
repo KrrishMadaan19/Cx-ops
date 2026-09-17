@@ -1,0 +1,7 @@
+node_modules/
+.wrangler/
+dist/
+
+# Local secrets — FLOWCALL_ACCESS_TOKEN etc. live in Cloudflare, not in the repo.
+.dev.vars
+.env

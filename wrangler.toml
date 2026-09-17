@@ -1,0 +1,25 @@
+name = "cx-ops-worker"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# schema.sql is imported as a string by src/index.js.
+[[rules]]
+type = "Text"
+globs = ["**/*.sql"]
+fallthrough = true
+
+# Serves the dashboard (index.html / app.js / styles.css) at the worker root.
+# Assets are matched before the Worker script, so /api/* still falls through.
+[assets]
+directory = "public"
+
+# Was every 2 minutes, which pushed writes past D1's free tier cap of
+# 100k rows/day. Five minutes keeps it comfortably under.
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cx-ops-db"
+database_id = "b2eba023-fb70-4faa-82d4-5ec070bf173b"

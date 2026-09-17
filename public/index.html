@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CX-OPS | Bot Audit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark">C</span><span>CX<span>-OPS</span></span></a>
+      <nav>
+        <a class="nav-link active" href="#overview"><span>◫</span> Overview</a>
+        <a class="nav-link" href="#conversations"><span>◌</span> Conversations</a>
+        <a class="nav-link" href="#agents"><span>♙</span> Agent performance</a>
+        <a class="nav-link" href="#audit"><span>◈</span> Chat audit</a>
+        <a class="nav-link" href="#flows"><span>⌘</span> Flows & CSAT</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">OPERATIONS / WHATSAPP</div>
+          <h1>Conversation health</h1>
+          <p class="subhead">A clear view of what your bot and team are resolving.</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button" aria-label="Notifications">♧<i></i></button>
+          <div class="range-picker">
+            <button class="date-button" id="rangeButton" aria-haspopup="true" aria-expanded="false">Today <span>⌄</span></button>
+            <div class="range-menu" id="rangeMenu" hidden>
+              <button class="range-preset" type="button" data-preset="today">Today</button>
+              <button class="range-preset" type="button" data-preset="yesterday">Yesterday</button>
+              <button class="range-preset" type="button" data-preset="7d">Last 7 days</button>
+              <button class="range-preset" type="button" data-preset="30d">Last 30 days</button>
+              <div class="range-custom">
+                <label>From <input type="date" id="rangeFrom" /></label>
+                <label>To <input type="date" id="rangeTo" /></label>
+                <button class="primary-button" type="button" id="rangeApply">Apply</button>
+              </div>
+            </div>
+          </div>
+          <button class="export-button" id="exportButton">↓ &nbsp;Export report</button>
+        </div>
+      </header>
+
+      <section class="filterbar" aria-label="Dashboard filters">
+        <div class="window-toggle" role="group" aria-label="Conversation owner">
+          <button class="window-button active" data-view="all">All conversations</button>
+          <button class="window-button" data-view="ai"><span class="spark">✦</span> AI window</button>
+          <button class="window-button" data-view="human"><span class="person-dot">●</span> Human window</button>
+        </div>
+        <div class="channel-picker">
+          <button class="date-button" id="channelButton" aria-haspopup="true" aria-expanded="false">WhatsApp <span>⌄</span></button>
+          <div class="range-menu" id="channelMenu" hidden></div>
+        </div>
+      </section>
+
+      <section id="overview" class="summary-grid">
+        <article class="metric-card traffic-card">
+          <div class="card-heading"><span>Total traffic</span></div>
+          <div class="metric-main"><strong data-metric="traffic">48,264</strong></div>
+          <p>in the selected range</p>
+          <div class="bar-chart" aria-label="Daily traffic chart"><i style="height:45%"></i><i style="height:64%"></i><i style="height:55%"></i><i style="height:87%"></i><i style="height:71%"></i><i style="height:93%"></i><i style="height:76%"></i></div>
+          <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+        </article>
+        <article class="metric-card response-card">
+          <div class="card-heading"><span>Conversations handled</span></div>
+          <div class="split-number"><strong data-metric="handled">42,866</strong><span data-metric="handledPctLabel">-- of traffic</span></div>
+          <div class="progress-track"><i id="handledBar" style="width:0%"></i></div>
+          <div class="stat-list"><div><span class="legend teal"></span>Responded <b data-metric="responded">38,602</b></div><div><span class="legend purple"></span>In progress <b data-metric="progress">4,264</b></div></div>
+        </article>
+        <article class="metric-card response-card">
+          <div class="card-heading"><span>Missed / dropped</span></div>
+          <div class="split-number danger"><strong data-metric="missed">5,398</strong><span data-metric="missedPctLabel">-- of traffic</span></div>
+          <div class="progress-track danger-track"><i id="missedBar" style="width:0%"></i></div>
+        </article>
+        <article class="metric-card satisfaction-card">
+          <div class="card-heading"><span>Overall CSAT</span></div>
+          <div class="score-wrap"><div class="score-ring" id="csatRing"><strong data-metric="csat">4.42</strong><span>/ 5</span></div><div><p>in the selected range</p></div></div>
+          <div class="rating-bar" id="ratingStars"><i></i><i></i><i></i><i></i><i></i><span data-metric="csatResponsesLabel">-- responses</span></div>
+        </article>
+      </section>
+
+      <section id="liveWatch" class="panel audit-panel live-watch-panel">
+        <div class="panel-head">
+          <div><div class="eyebrow">LIVE, NOT HISTORICAL</div><h2>Needs a response now <span class="audit-count-badge" id="liveWatchBadge" hidden></span></h2><p>Today's tickets handed to a specific agent who hasn't acted on them yet, past the 5-minute target since handoff -- resets at midnight IST, independent of the date range above.</p></div>
+        </div>
+        <div class="table-wrap compact-table">
+          <table><thead><tr><th>CONVERSATION</th><th>PHONE</th><th>CHANNEL</th><th>FLOW</th><th>WAITING FOR</th><th>AGENT</th></tr></thead><tbody id="liveWatchRows"></tbody></table>
+        </div>
+        <p class="accuracy-note" id="liveWatchNote"></p>
+      </section>
+
+      <section class="kpi-coverage">
+        <div class="section-title"><div><div class="eyebrow">COMPLETE KPI COVERAGE</div><h2>Bot and human operating health</h2></div><span id="healthRangeLabel">Today</span></div>
+        <div class="health-grid">
+          <article class="health-card bot"><div class="health-head"><span class="mini-icon ai-icon">✦</span><div><b>AI / bot window</b><small>Containment and experience quality</small></div></div><div class="health-metrics"><div><span>Containment rate</span><strong id="hcContainment">--</strong></div><div><span>Handoff rate</span><strong id="hcHandoff">--</strong></div></div></article>
+          <article class="health-card human"><div class="health-head"><span class="mini-icon human-icon">●</span><div><b>Human window</b><small>Queue health and resolution quality</small></div></div><div class="health-metrics"><div><span>Tickets resolved</span><strong id="hcResolved">--</strong><small id="hcAccepted"></small></div><div><span>First contact resolution</span><strong id="hcFcr">--</strong><small id="hcFcrNote"></small></div><div><span>Avg. handle time</span><strong id="hcHandleTime">--</strong><small>active agent time</small></div></div></article>
+        </div>
+      </section>
+
+      <section id="compare" class="panel compare-panel">
+        <div class="panel-head">
+          <div><h2>Compare to a previous day</h2><p id="compareSubtitle">Pick a day to compare against the selected range.</p></div>
+          <div class="compare-controls">
+            <input type="date" id="compareDate" />
+            <button class="primary-button" id="compareRun" type="button">Compare</button>
+          </div>
+        </div>
+        <div class="table-wrap compact-table" id="compareResult" hidden>
+          <table><thead><tr><th>METRIC</th><th id="compareCurrentHead">CURRENT</th><th id="compareDayHead">DAY</th><th>Δ</th></tr></thead><tbody id="compareRows"></tbody></table>
+        </div>
+      </section>
+
+      <section id="conversations" class="section-grid">
+        <article class="panel resolution-panel">
+          <div class="panel-head"><div><h2>Resolution split</h2><p>Who resolved the conversation?</p></div></div>
+          <div class="resolution-content"><div class="donut" id="donut"><div><strong data-metric="resolution">74%</strong><span>AI resolved</span></div></div><div class="resolution-legend"><div><span class="legend teal"></span><div><b>AI resolved</b><small data-metric="aiResolved">28,566 conversations</small></div><strong data-metric="aiResolvedPct">74%</strong></div><div><span class="legend violet"></span><div><b>Human resolved</b><small data-metric="humanResolved">10,036 conversations</small></div><strong data-metric="humanResolvedPct">26%</strong></div><hr/><div><span class="legend gray"></span><div><b>Transferred to human</b><small data-metric="handoffCount">7,481 conversations</small></div><strong data-metric="handoffRatePct">19.4%</strong></div></div></div>
+        </article>
+        <article class="panel timing-panel">
+          <div class="panel-head"><div><h2>Speed to serve</h2><p>Response and resolution time</p></div></div>
+          <div class="time-grid"><div><div class="time-icon teal-bg">↩</div><span>First response time</span><strong data-metric="frt">--</strong><small class="trend" id="frtTrend"></small></div><div><div class="time-icon purple-bg">✓</div><span>Avg. resolution time</span><strong data-metric="resolutionTime">--</strong><small class="trend" id="resolutionTrend"></small></div></div>
+          <div class="sla-box"><span class="sla-dot"></span><span id="slaBoxText">--</span><button class="audit-jump" id="seeBreaches" type="button">See breaches →</button></div>
+        </article>
+      </section>
+
+      <section id="agents" class="panel agent-panel">
+        <div class="panel-head"><div><h2>Agent performance</h2><p>Compare outcomes, workload and quality across your team.</p></div><div class="panel-tools"><select id="agentSelect" class="agent-select"><option value="all">All active agents</option></select><input type="date" id="agentCompareDate" class="agent-select" title="Compare selected agent to a previous day" /></div></div>
+        <div class="table-wrap"><table><thead><tr><th>AGENT</th><th>CONVERSATIONS <button>↓</button></th><th>RESOLUTION</th><th>AVG. RESPONSE</th><th>CSAT</th><th>QUALITY SCORE</th><th></th></tr></thead><tbody id="agentRows"></tbody></table></div>
+        <div class="table-wrap compact-table" id="agentCompareResult" hidden>
+          <p id="agentCompareSubtitle" class="accuracy-note"></p>
+          <table><thead><tr><th>METRIC</th><th id="agentCompareCurrentHead">CURRENT</th><th id="agentCompareDayHead">DAY</th><th>Δ</th></tr></thead><tbody id="agentCompareRows"></tbody></table>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <article id="flows" class="panel flow-panel"><div class="panel-head"><div><h2>CSAT by flow</h2><p>Find the journeys that need attention.</p></div></div><div id="flowRows" class="flow-rows"></div></article>
+        <article id="auditSignals" class="panel audit-panel"><div class="panel-head"><div><h2>Audit signals</h2><p id="auditSignalsRangeNote">Issues detected in the selected range.</p></div><button class="text-button audit-jump">Open audit →</button></div><div class="audit-list" id="auditSignalsList"></div></article>
+      </section>
+
+      <section id="audit" class="audit-workspace panel">
+        <div class="panel-head">
+          <div><div class="eyebrow">ACTION CENTRE</div><h2>Chat audit queue <span class="audit-count-badge" id="auditCountBadge" hidden></span></h2><p>Prioritised conversations for QA, coaching and bot improvement.</p></div>
+          <div class="queue-actions">
+            <button class="secondary-button" id="assignBatch">Assign selected</button>
+            <button class="primary-button" id="markReviewed">Mark reviewed</button>
+            <button class="audit-toggle" id="auditToggle" type="button" aria-expanded="false" aria-controls="auditBody">Show queue <span>⌄</span></button>
+          </div>
+        </div>
+        <div class="audit-body is-collapsed" id="auditBody">
+          <div class="audit-toolbar"><div class="audit-tabs" role="tablist"><button class="audit-tab active" data-audit-filter="all">All <span id="tabCountAll">--</span></button><button class="audit-tab" data-audit-filter="sla">SLA breach <span id="tabCountSla">--</span></button><button class="audit-tab" data-audit-filter="bot">Bot quality <span id="tabCountBot">--</span></button><button class="audit-tab" data-audit-filter="human">Human coaching <span id="tabCountHuman">--</span></button></div><label class="search-box">⌕ <input id="auditSearch" type="search" placeholder="Search customer, order, flow or agent" /></label></div>
+          <div class="table-wrap compact-table" id="slaAgentWrap" hidden>
+            <p class="accuracy-note">Click an agent to filter the list below to just their breaches.</p>
+            <table><thead><tr><th>AGENT</th><th>BREACHES</th><th>AVG DELAY</th><th>WORST DELAY</th></tr></thead><tbody id="slaAgentRows"></tbody></table>
+          </div>
+          <div class="audit-queue-layout"><div class="audit-table-wrap"><table class="audit-table"><thead><tr><th><input type="checkbox" id="selectAll" aria-label="Select all" /></th><th>CONVERSATION</th><th>SIGNAL</th><th>OWNER</th><th>FLOW</th><th>RISK</th><th></th></tr></thead><tbody id="auditRows"></tbody></table></div><aside class="audit-empty" id="auditEmpty"><div class="empty-icon">◌</div><b>Select a conversation</b><span>Inspect the transcript, audit findings and recommended action.</span></aside></div>
+        </div>
+      </section>
+
+      <section class="deep-dive-grid">
+        <article class="panel flow-detail"><div class="panel-head"><div><h2>Bot failure analysis</h2><p>How often the bot resolves vs. hands off, by real customer intent -- not FlowCall's Subcategory field, which is tagged too late/unevenly to answer this (see chat history).</p></div></div><p class="accuracy-note" id="intentCoverageNote"></p><div class="table-wrap compact-table"><table><thead><tr><th>INTENT</th><th>TOTAL</th><th>BOT RESOLVED</th><th>HANDED OFF</th><th>FAILURE RATE</th><th>CSAT</th><th>D-SAT</th></tr></thead><tbody id="intentFailureRows"></tbody></table></div></article>
+        <article class="panel insight-panel"><div class="panel-head"><div><h2>Conversation intelligence</h2><p>What the audit is finding.</p></div></div><div class="intel-block"><b>D-SAT reasons</b><div id="dsatReasonsList"></div></div><div class="sentiment-summary" id="sentimentSummary"></div><p class="accuracy-note" id="sentimentNote"></p></article>
+      </section>
+
+      <section class="deep-dive-grid second-dive">
+        <article class="panel"><div class="panel-head"><div><h2>Conversation & handoff funnel</h2><p>Bot vs. human outcomes for the same conversations -- not one shrinking line.</p></div></div><div id="funnelRows" class="funnel-list"></div></article>
+        <article class="panel"><div class="panel-head"><div><h2>Top unresolved queries</h2><p>Direct input for the next training and tooling pass.</p></div></div><div class="query-list" id="failingIntentsList"></div></article>
+      </section>
+    </main>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="audit-drawer" id="auditDrawer" aria-label="Conversation audit detail"><button class="drawer-close" id="drawerClose">×</button><div id="drawerContent"></div></aside>
+    <div class="toast" id="toast">Report download started</div>
+    <script src="app.js"></script>
+  </body>
+</html>
